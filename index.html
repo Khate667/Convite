@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Um convite especial ❤️</title>
+<style>
+    * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Arial Rounded MT Bold', 'Segoe UI', sans-serif; }
+  body {
+    background: linear-gradient(135deg, #ff9a9e 0%, #fad0c4 100%);
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    overflow: hidden;
+    position: relative;
+  }
+  .container {
+    background: white;
+    padding: 40px 30px;
+    border-radius: 20px;
+    box-shadow: 0 10px 40px rgba(0,0,0,0.2);
+    text-align: center;
+    max-width: 400px;
+    width: 90%;
+    z-index: 10;
+  }
+  h1 { color: #e91e63; margin-bottom: 20px; font-size: 1.8em; }
+  p { color: #555; margin-bottom: 30px; font-size: 1.2em; }
+  .buttons { display: flex; justify-content: center; gap: 20px; position: relative; height: 60px; }
+  button {
+    padding: 12px 30px;
+    border: none;
+    border-radius: 50px;
+    font-size: 1.1em;
+    cursor: pointer;
+    transition: 0.3s;
+  }
+  #btnSim {
+    background: #4CAF50;
+    color: white;
+  }
+  #btnSim:hover { transform: scale(1.1); }
+  #btnNao {
+    background: #f44336;
+    color: white;
+    position: absolute;
+  }
+  input {
+    width: 100%;
+    padding: 12px;
+    margin: 10px 0;
+    border: 2px solid #e91e63;
+    border-radius: 10px;
+    font-size: 1em;
+  }
+  #contador { font-size: 0.9em; color: #888; margin-top: 10px; }
+  .coracao {
+    position: absolute;
+    color: rgba(233, 30, 99, 0.3);
+    font-size: 20px;
+    animation: cair 5s linear infinite;
+  }
+  @keyframes cair {
+    from { transform: translateY(-100px); }
+    to { transform: translateY(100vh); }
+  }
+</style>
+</head>
+<body>
+
+<div class="container" id="app">
+  <h1 id="pergunta">Quer sair comigo neste sábado? ❤️</h1>
+  <div class="buttons" id="botoes">
+    <button id="btnSim">Sim</button>
+    <button id="btnNao">Não</button>
+  </div>
+  <p id="contador">Tentativas de dizer Não: 0</p>
+</div>
+
+<script>
+let etapa = 1;
+let tentativasNao = 0;
+let hora = '';
+let local = '';
+
+const btnSim = document.getElementById('btnSim');
+const btnNao = document.getElementById('btnNao');
+const pergunta = document.getElementById('pergunta');
+const botoes = document.getElementById('botoes');
+const contador = document.getElementById('contador');
+
+// Faz corações caírem
+setInterval(() => {
+  const coracao = document.createElement('div');
+  coracao.classList.add('coracao');
+  coracao.style.left = Math.random() * 100 + 'vw';
+  coracao.innerHTML = '❤️';
+  document.body.appendChild(coracao);
+  setTimeout(() => coracao.remove(), 5000);
+}, 300);
+
+// Botão NÃO foge
+function moverBotaoNao() {
+  tentativasNao++;
+  contador.innerText = `Tentativas de dizer Não: ${tentativasNao}`;
+  const x = Math.random() * (window.innerWidth - 100);
+  const y = Math.random() * (window.innerHeight - 100);
+  btnNao.style.left = x + 'px';
+  btnNao.style.top = y + 'px';
+}
+
+btnNao.addEventListener('mouseover', moverBotaoNao);
+btnNao.addEventListener('touchstart', moverBotaoNao);
+
+// Botão SIM avança
+btnSim.addEventListener('click', () => {
+  if(etapa === 1) {
+    etapa = 2;
+    pergunta.innerText = "Topas jantar e cinema depois? 🍿";
+  } 
+  else if(etapa === 2) {
+    etapa = 3;
+    botoes.innerHTML = `<input type="time" id="horaInput"><button id="btnProximo">Próximo</button>`;
+    document.getElementById('btnProximo').onclick = () => {
+      hora = document.getElementById('horaInput').value;
+      if(hora) {
+        etapa = 4;
+        pergunta.innerText = "Onde te busco? 📍";
+        botoes.innerHTML = `<input type="text" id="localInput" placeholder="Endereço"><button id="btnFinalizar">Finalizar</button>`;
+        document.getElementById('btnFinalizar').onclick = finalizar;
+      }
+    };
+  }
+});
+
+function finalizar() {
+  local = document.getElementById('localInput').value;
+  if(local) {
+    const msg = `Sabia que ias dizer SIM ❤️ Te busco às ${hora} em ${local}`;
+    document.getElementById('app').innerHTML = `
+      <h1>SUCESSO!</h1>
+      <p>${msg}</p>
+      <a href="https://wa.me/?text=${encodeURIComponent(msg)}" target="_blank">
+        <button style="background:#25D366;color:white;padding:12px 30px;border:none;border-radius:50px;">Enviar no WhatsApp</button>
+      </a>
+    `;
+    // Explosão de confete
+    for(let i=0; i<50; i++) {
+      const confete = document.createElement('div');
+      confete.classList.add('coracao');
+      confete.style.left = Math.random() * 100 + 'vw';
+      confete.innerHTML = ['🎉','✨','❤️'][Math.floor(Math.random()*3)];
+      document.body.appendChild(confete);
+    }
+  }
+}
+</script>
+
+</body>
+</html>
